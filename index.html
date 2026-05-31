@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>邓美琦 · 个人作品集</title>
+    <style>
+        :root {
+            --bg: #070b14;
+            --surface: rgba(15, 23, 36, 0.75);
+            --surface-solid: #101a28;
+            --text-primary: #edf2fb;
+            --text-secondary: #b4c6e8;
+            --text-muted: #7f92b0;
+            --border-light: rgba(255, 255, 255, 0.07);
+            --border-glow: rgba(99, 102, 241, 0.3);
+            --accent: #6366f1;
+            --accent-glow: #8b5cf6;
+            --accent-secondary: #00c2ba;
+            --glass-border: rgba(120, 160, 255, 0.12);
+            --shadow-sm: 0 8px 24px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 20px 40px -12px rgba(0, 0, 0, 0.55);
+            --radius-sm: 10px;
+            --radius-md: 16px;
+            --radius-lg: 22px;
+            --radius-xl: 28px;
+            --nav-height: 52px;
+            --transition: all 0.28s cubic-bezier(0.2, 0.9, 0.4, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-text-size-adjust: 100%;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'PingFang SC', 'Segoe UI', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            line-height: 1.55;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            padding-top: var(--nav-height);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ===== 粒子画布背景 ===== */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            background: radial-gradient(circle at 25% 8%, #0b1a2f 0%, #030712 100%);
+        }
+
+        /* ===== 发光渐变文字 ===== */
+        .glow-text {
+            background: linear-gradient(135deg, #6366f1 0%, #00c2ba 55%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+        }
+
+        /* ===== 导航栏 ===== */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            height: var(--nav-height);
+            background: rgba(10, 14, 22, 0.82);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 14px;
+        }
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            max-width: 540px;
+            width: 100%;
+            justify-content: space-between;
+        }
+        .nav-brand {
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: -0.3px;
+            color: var(--text-primary);
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .nav-brand span { color: var(--accent); }
+        .nav-tabs {
+            display: flex;
+            gap: 3px;
+            background: var(--surface);
+            border-radius: 22px;
+            padding: 3px;
+            border: 1px solid var(--border-light);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+        }
+        .nav-tab {
+            font-size: 11px;
+            font-weight: 500;
+            padding: 6px 11px;
+            border-radius: 19px;
+            cursor: pointer;
+            transition: var(--transition);
+            color: var(--text-muted);
+            text-decoration: none;
+            white-space: nowrap;
+            letter-spacing: -0.1px;
+            user-select: none;
+            background: transparent;
+            border: none;
+            font-family: inherit;
+        }
+        .nav-tab.active {
+            background: rgba(99, 102, 241, 0.14);
+            color: #c7c9ff;
+            font-weight: 600;
+        }
+        .nav-tab:active { transform: scale(0.93); }
+
+        /* ===== 主容器 ===== */
+        .main-container {
+            max-width: 540px;
+            margin: 0 auto;
+            padding: 0 16px 36px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ===== Hero ===== */
+        .hero {
+            padding: 38px 0 18px;
+            text-align: center;
+            position: relative;
+            animation: fadeSlide 0.7s ease;
+        }
+        .hero-orb {
+            position: absolute;
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%);
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            pointer-events: none;
+            filter: blur(32px);
+            animation: orbPulse 4.5s ease-in-out infinite;
+        }
+        @keyframes orbPulse {
+            0%, 100% { opacity: 0.55; transform: translateX(-50%) scale(1); }
+            50% { opacity: 1; transform: translateX(-50%) scale(1.3); }
+        }
+        .hero-name {
+            font-size: clamp(2.4rem, 10vw, 3.6rem);
+            font-weight: 800;
+            letter-spacing: -1.2px;
+            line-height: 1.1;
+            margin-bottom: 5px;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-tagline {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 400;
+            letter-spacing: 0.4px;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 6px;
+        }
+        .hero-sub {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-sub em {
+            font-style: normal;
+            color: var(--accent-glow);
+            font-weight: 500;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 11px 22px;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-family: inherit;
+            letter-spacing: -0.2px;
+            position: relative;
+            z-index: 1;
+            user-select: none;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
+            color: #fff;
+            box-shadow: 0 4px 22px rgba(99, 102, 241, 0.4);
+        }
+        .btn-primary:active {
+            transform: scale(0.94);
+            box-shadow: 0 2px 10px rgba(99, 102, 241, 0.5), 0 0 0 10px rgba(99, 102, 241, 0.08);
+        }
+        .btn-arrow {
+            display: inline-block;
+            transition: transform 0.25s ease;
+            font-size: 13px;
+        }
+        .btn-primary:active .btn-arrow { transform: translateY(3px); }
+
+        /* ===== 区块标题 ===== */
+        .section-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2.2px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            font-weight: 600;
+            opacity: 0.75;
+        }
+        .section-intro {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-light);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        /* ===== 作品卡片网格 ===== */
+        .works-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        @media (max-width: 420px) {
+            .works-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== 作品卡片 ===== */
+        .work-card {
+            background: var(--surface);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            position: relative;
+        }
+        .work-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--border-glow);
+            box-shadow: var(--shadow-lg), 0 0 0 4px rgba(99, 102, 241, 0.05);
+        }
+        .work-card:active { transform: scale(0.97); }
+        .work-card-img-wrap {
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid var(--border-light);
+            aspect-ratio: 16/10;
+            background: var(--surface-solid);
+        }
+        .work-card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s ease;
+        }
+        .work-card:hover .work-card-img { transform: scale(1.05); }
+        .work-card-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            color: #fff;
+            z-index: 2;
+        }
+        .work-card-badge.link {
+            background: rgba(99, 102, 241, 0.7);
+        }
+        .work-card-body {
+            padding: 14px 16px 16px;
+        }
+        .work-card-title {
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            margin-bottom: 4px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .work-card-arrow {
+            font-size: 12px;
+            transition: transform 0.25s ease;
+            color: var(--accent);
+        }
+        .work-card:hover .work-card-arrow { transform: translateX(3px); }
+        .work-card-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .work-card-tag {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            background: rgba(99, 102, 241, 0.13);
+            color: #b3b5ff;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+        .work-card-tag.design {
+            background: rgba(0, 194, 186, 0.11);
+            color: #5eead4;
+            border: 1px solid rgba(0, 194, 186, 0.18);
+        }
+
+        /* ===== 图片占位 ===== */
+        .img-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface-solid);
+            color: var(--text-muted);
+            font-size: 13px;
+            gap: 6px;
+        }
+
+        /* ===== 教育卡片 ===== */
+        .edu-card {
+            background: var(--surface);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+        .edu-card:hover {
+            border-color: var(--border-glow);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        .edu-school {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            margin-bottom: 4px;
+        }
+        .edu-major {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 14px;
+        }
+        .edu-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .edu-list li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            padding: 8px 12px;
+            background: rgba(99, 102, 241, 0.06);
+            border-radius: 10px;
+            border: 1px solid var(--border-light);
+        }
+        .edu-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-secondary);
+            box-shadow: 0 0 8px rgba(0, 194, 186, 0.5);
+            flex-shrink: 0;
+        }
+
+        /* ===== 联系方式 ===== */
+        .contact-section {
+            padding: 10px 0 6px;
+        }
+        .contact-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 13px 16px;
+            background: var(--surface);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--glass-border);
+            transition: var(--transition);
+            text-decoration: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+        }
+        .contact-item:hover {
+            border-color: var(--border-glow);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        .contact-item:active {
+            transform: scale(0.97);
+            background: rgba(99, 102, 241, 0.05);
+        }
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            position: relative;
+        }
+        .contact-icon.phone { background: rgba(99, 102, 241, 0.16); }
+        .contact-icon.email { background: rgba(52, 211, 153, 0.14); }
+        .contact-icon.wechat { background: rgba(251, 191, 36, 0.14); }
+        .contact-icon-glow {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: glowPing 2.6s ease-in-out infinite;
+        }
+        .contact-icon.phone .contact-icon-glow {
+            background: rgba(99, 102, 241, 0.4);
+            animation-delay: 0s;
+        }
+        .contact-icon.email .contact-icon-glow {
+            background: rgba(52, 211, 153, 0.35);
+            animation-delay: 0.85s;
+        }
+        .contact-icon.wechat .contact-icon-glow {
+            background: rgba(251, 191, 36, 0.35);
+            animation-delay: 1.7s;
+        }
+        @keyframes glowPing {
+            0%, 100% { transform: scale(0.55); opacity: 0.22; }
+            50% { transform: scale(1.6); opacity: 0; }
+        }
+        .contact-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        .contact-value {
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: -0.2px;
+            word-break: break-all;
+        }
+        .contact-copy-hint {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-left: auto;
+            flex-shrink: 0;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .contact-item:active .contact-copy-hint { opacity: 1; }
+
+        /* ===== 鸣谢 ===== */
+        .thanks-section {
+            text-align: center;
+            padding: 14px 0 6px;
+        }
+        .thanks-text {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* ===== Toast ===== */
+        .copy-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: #2d2d35;
+            color: #e4e4e7;
+            padding: 10px 22px;
+            border-radius: 22px;
+            font-size: 13px;
+            font-weight: 500;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        .copy-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ===== 灯箱 ===== */
+        #lightbox-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(3, 7, 18, 0.94);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            cursor: pointer;
+        }
+        #lightbox-modal img {
+            max-width: 93%;
+            max-height: 88%;
+            border-radius: 20px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            cursor: default;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 16px;
+            right: 22px;
+            color: #fff;
+            font-size: 44px;
+            cursor: pointer;
+            opacity: 0.75;
+            z-index: 10001;
+            line-height: 1;
+            transition: opacity 0.2s;
+            user-select: none;
+        }
+        .lightbox-close:hover { opacity: 1; }
+
+        /* ===== 页脚 ===== */
+        .copyright {
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            padding: 14px 0 6px;
+            opacity: 0.6;
+            letter-spacing: 0.3px;
+        }
+
+        /* ===== 动画 ===== */
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== 响应式 ===== */
+        @media (min-width: 520px) {
+            .contact-grid {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .contact-item {
+                flex: 1;
+                min-width: 135px;
+                flex-direction: column;
+                text-align: center;
+                gap: 8px;
+                padding: 16px 12px;
+            }
+            .contact-copy-hint { margin-left: 0; }
+            .nav-tab { font-size: 12px; padding: 7px 14px; }
+        }
+        @media (min-width: 768px) {
+            .main-container { max-width: 580px; padding: 0 22px 44px; }
+            .hero { padding: 48px 0 24px; }
+            .hero-name { font-size: 3.4rem; letter-spacing: -1.6px; }
+        }
+        @media (max-width: 380px) {
+            .hero-name { font-size: 2rem; }
+            .nav-tab { font-size: 10px; padding: 5px 8px; }
+            .btn { padding: 10px 17px; font-size: 13px; }
+            .work-card-title { font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 粒子背景画布 -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- 导航栏 -->
+    <nav class="nav" aria-label="主导航">
+        <div class="nav-inner">
+            <a href="#hero" class="nav-brand">MQ<span>.</span></a>
+            <div class="nav-tabs">
+                <a href="#hero" class="nav-tab active" data-nav="hero">首页</a>
+                <a href="#works" class="nav-tab" data-nav="works">作品</a>
+                <a href="#edu" class="nav-tab" data-nav="edu">教育</a>
+                <a href="#contact" class="nav-tab" data-nav="contact">联系</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容 -->
+    <main class="main-container">
+
+        <!-- Hero -->
+        <section class="hero" id="hero">
+            <div class="hero-orb"></div>
+            <h1 class="hero-name glow-text">邓美琦</h1>
+            <p class="hero-tagline">大二 · 独立创作者</p>
+            <p class="hero-sub">用 <em>AI</em> 把想法变成现实</p>
+            <a href="#works" class="btn btn-primary">
+                查看我的作品
+                <span class="btn-arrow">↓</span>
+            </a>
+        </section>
+
+        <!-- 交互作品 -->
+        <section id="works" style="padding:22px 0 6px;">
+            <p class="section-label">// 交互作品</p>
+            <div class="section-intro">
+                从零到一，独立完成逻辑设计与开发。点击卡片查看详情截图。
+            </div>
+            <div class="works-grid">
+                <!-- 飞机大战 -->
+                <div class="work-card" onclick="openLightbox('images/plane-war.png')" title="点击放大查看">
+                    <div class="work-card-img-wrap">
+                        <span class="work-card-badge" style="background:rgba(0,194,186,0.7);">点击放大</span>
+                        <img class="work-card-img" src="images/plane-war.png" alt="飞机大战小游戏" loading="eager"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                        <div class="img-placeholder" style="display:none;">🎮 飞机大战</div>
+                    </div>
+                    <div class="work-card-body">
+                        <span class="work-card-tag">游戏开发</span>
+                        <h3 class="work-card-title">飞机大战</h3>
+                        <p class="work-card-desc">经典射击游戏，玩家控制、敌机生成、分数累计，稳定60fps运行。</p>
+                    </div>
+                </div>
+                <!-- 粒子效果 -->
+                <div class="work-card" onclick="openLightbox('images/particle-fx.png')" title="点击放大查看">
+                    <div class="work-card-img-wrap">
+                        <span class="work-card-badge" style="background:rgba(0,194,186,0.7);">点击放大</span>
+                        <img class="work-card-img" src="images/particle-fx.png" alt="粒子动态效果" loading="eager"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                        <div class="img-placeholder" style="display:none;">✨ 粒子特效</div>
+                    </div>
+                    <div class="work-card-body">
+                        <span class="work-card-tag">可视化</span>
+                        <h3 class="work-card-title">粒子效果</h3>
+                        <p class="work-card-desc">烟花爆炸、星空粒子流动等特效，封装为可复用组件。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 设计 & 系统 -->
+        <section style="padding:18px 0 6px;">
+            <p class="section-label">// 设计 &amp; 系统</p>
+            <div class="section-intro">
+                不只是写代码——用AI工具做设计、搭知识体系，让创作效率翻倍。
+            </div>
+            <div class="works-grid">
+                <!-- 海报设计 -->
+                <div class="work-card" onclick="openLightbox('images/poster.png')" title="点击放大查看">
+                    <div class="work-card-img-wrap">
+                        <span class="work-card-badge" style="background:rgba(0,194,186,0.7);">点击放大</span>
+                        <img class="work-card-img" src="images/poster.png" alt="五一劳动节海报设计" loading="lazy"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                        <div class="img-placeholder" style="display:none;">🎨 海报设计</div>
+                    </div>
+                    <div class="work-card-body">
+                        <span class="work-card-tag design">AI × 设计</span>
+                        <h3 class="work-card-title">海报设计</h3>
+                        <p class="work-card-desc">用即梦+Canva还原复古宣传画风格，AI辅助热点营销快速出图。</p>
+                    </div>
+                </div>
+                <!-- 知识系统 -->
+                <div class="work-card" onclick="openLightbox('images/knowledge.png')" title="点击放大查看">
+                    <div class="work-card-img-wrap">
+                        <span class="work-card-badge" style="background:rgba(0,194,186,0.7);">点击放大</span>
+                        <img class="work-card-img" src="images/knowledge.png" alt="个人知识库系统" loading="lazy"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                        <div class="img-placeholder" style="display:none;">📚 知识系统</div>
+                    </div>
+                    <div class="work-card-body">
+                        <span class="work-card-tag design">效率 · 系统</span>
+                        <h3 class="work-card-title">知识系统</h3>
+                        <p class="work-card-desc">Obsidian四层漏斗体系，50+篇笔记，检索时间缩短至30秒以内。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 教育背景 -->
+        <section id="edu" style="padding:18px 0 6px;">
+            <p class="section-label">// 教育背景</p>
+            <div class="edu-card">
+                <h3 class="edu-school glow-text">广东海洋大学</h3>
+                <p class="edu-major">通信工程 · 本科在读</p>
+                <ul class="edu-list">
+                    <li>
+                        <span class="edu-dot"></span>
+                        通过英语四级（CET-4）
+                    </li>
+                    <li>
+                        <span class="edu-dot"></span>
+                        阿里巴巴人工智能训练师（高级）证书
+                    </li>
+                    <li>
+                        <span class="edu-dot"></span>
+                        参加蓝桥杯 Python 程序设计比赛
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 联系方式 -->
+        <section class="contact-section" id="contact">
+            <p class="section-label">// 联系方式</p>
+            <div class="contact-grid">
+                <!-- 电话 -->
+                <a href="tel:13415611075" class="contact-item">
+                    <div class="contact-icon phone">
+                        <span class="contact-icon-glow"></span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    </div>
+                    <div>
+                        <div class="contact-label">电话</div>
+                        <div class="contact-value">13415611075</div>
+                    </div>
+                    <span class="contact-copy-hint">拨打</span>
+                </a>
+
+                <!-- 邮箱 -->
+                <a href="mailto:dmq102@stu.gdou.edu.cn" class="contact-item">
+                    <div class="contact-icon email">
+                        <span class="contact-icon-glow"></span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                    </div>
+                    <div>
+                        <div class="contact-label">邮箱</div>
+                        <div class="contact-value">dmq102@stu.gdou.edu.cn</div>
+                    </div>
+                    <span class="contact-copy-hint">发邮件</span>
+                </a>
+
+                <!-- 微信（可复制） -->
+                <div class="contact-item" id="wechat-item" role="button" tabindex="0" aria-label="复制微信号">
+                    <div class="contact-icon wechat">
+                        <span class="contact-icon-glow"></span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                    </div>
+                    <div>
+                        <div class="contact-label">微信</div>
+                        <div class="contact-value">D4869001</div>
+                    </div>
+                    <span class="contact-copy-hint">点击复制</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 特别鸣谢 -->
+        <section class="thanks-section">
+            <p class="section-label">// 特别鸣谢</p>
+            <p class="thanks-text">
+                感谢浪尖的学长们，以及社区友友们的帮助与支持。
+            </p>
+        </section>
+
+        <!-- 页脚 -->
+        <div class="copyright">
+            © 2026 邓美琦 · Built with passion &amp; AI
+        </div>
+    </main>
+
+    <!-- 灯箱 -->
+    <div id="lightbox-modal" onclick="closeLightbox()">
+        <span class="lightbox-close">&times;</span>
+        <img id="lightbox-img" src="" alt="预览大图" onclick="event.stopPropagation()">
+    </div>
+
+    <!-- Toast -->
+    <div class="copy-toast" id="copyToast">已复制到剪贴板</div>
+
+    <script>
+        (function() {
+            // ========== 灯箱 ==========
+            window.openLightbox = function(src) {
+                const modal = document.getElementById('lightbox-modal');
+                const img = document.getElementById('lightbox-img');
+                if (modal && img) {
+                    img.src = src;
+                    modal.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                }
+            };
+            window.closeLightbox = function() {
+                const modal = document.getElementById('lightbox-modal');
+                if (modal) {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = '';
+                }
+            };
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closeLightbox();
+            });
+
+            // ========== 导航滚动高亮 ==========
+            const navTabs = document.querySelectorAll('.nav-tab');
+            const sections = [];
+            navTabs.forEach(tab => {
+                const href = tab.getAttribute('href');
+                if (href && href.startsWith('#')) {
+                    const el = document.getElementById(href.substring(1));
+                    if (el) sections.push({ el, tab });
+                }
+            });
+
+            function updateNavActive() {
+                let currentId = null;
+                const scrollTop = window.scrollY + 70;
+                sections.forEach(({ el, tab }) => {
+                    if (el.offsetTop <= scrollTop) {
+                        currentId = tab.getAttribute('data-nav');
+                    }
+                });
+                navTabs.forEach(tab => {
+                    tab.classList.remove('active');
+                    if (tab.getAttribute('data-nav') === currentId) tab.classList.add('active');
+                });
+                if (window.scrollY < 50) {
+                    navTabs.forEach(tab => {
+                        tab.classList.remove('active');
+                        if (tab.getAttribute('data-nav') === 'hero') tab.classList.add('active');
+                    });
+                }
+            }
+            window.addEventListener('scroll', updateNavActive, { passive: true });
+            updateNavActive();
+
+            // ========== 导航平滑滚动 ==========
+            navTabs.forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    if (href && href.startsWith('#')) {
+                        e.preventDefault();
+                        const target = document.getElementById(href.substring(1));
+                        if (target) {
+                            window.scrollTo({ top: target.offsetTop - 58, behavior: 'smooth' });
+                        }
+                    }
+                });
+            });
+
+            const heroBtn = document.querySelector('.btn-primary[href="#works"]');
+            if (heroBtn) {
+                heroBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.getElementById('works');
+                    if (target) {
+                        window.scrollTo({ top: target.offsetTop - 58, behavior: 'smooth' });
+                    }
+                });
+            }
+
+            // ========== 微信复制 ==========
+            const wechatItem = document.getElementById('wechat-item');
+            const copyToast = document.getElementById('copyToast');
+            let toastTimer = null;
+
+            function showToast() {
+                if (toastTimer) clearTimeout(toastTimer);
+                copyToast.classList.add('show');
+                toastTimer = setTimeout(() => copyToast.classList.remove('show'), 1800);
+            }
+
+            function fallbackCopy(text) {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.cssText = 'position:fixed;left:-9999px;top:-9999px;opacity:0;';
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                try { document.execCommand('copy'); showToast(); } catch (e) {}
+                document.body.removeChild(ta);
+            }
+
+            if (wechatItem && copyToast) {
+                wechatItem.addEventListener('click', function() {
+                    const wid = 'D4869001';
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(wid).then(showToast).catch(() => fallbackCopy(wid));
+                    } else {
+                        fallbackCopy(wid);
+                    }
+                });
+                wechatItem.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        this.click();
+                    }
+                });
+            }
+
+            // ========== 粒子系统 ==========
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            let width, height;
+            let particles = [];
+            let ripples = [];
+            let mouseRippleParticles = [];
+
+            const isMobile = window.innerWidth < 520;
+            const PARTICLE_COUNT = isMobile ? 45 : 100;
+
+            function resizeCanvas() {
+                width = window.innerWidth;
+                height = window.innerHeight;
+                canvas.width = width;
+                canvas.height = height;
+            }
+
+            function initParticles() {
+                particles = [];
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    particles.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        vx: (Math.random() - 0.5) * 0.22,
+                        vy: (Math.random() - 0.5) * 0.22,
+                        size: Math.random() * 2.2 + 1,
+                        baseColor: 'hsla(' + (215 + Math.random() * 40) + ', 78%, 62%, 0.65)'
+                    });
+                }
+            }
+
+            function triggerRippleFromElement(el) {
+                const rect = el.getBoundingClientRect();
+                const cx = rect.left + rect.width / 2;
+                const cy = rect.top + rect.height / 2;
+                ripples.push({
+                    x: cx,
+                    y: cy,
+                    radius: 6,
+                    maxRadius: Math.min(rect.width, rect.height) * 1.1,
+                    alpha: 0.85
+                });
+                for (let i = 0; i < 12; i++) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = 2 + Math.random() * 4.5;
+                    mouseRippleParticles.push({
+                        x: cx,
+                        y: cy,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed,
+                        size: 2.5 + Math.random() * 5,
+                        life: 1,
+                        decay: 0.014 + Math.random() * 0.01,
+                        color: 'hsl(' + (255 + Math.random() * 70) + ', 88%, 62%)'
+                    });
+                }
+            }
+
+            function bindHoverEffects() {
+                const selector = '.work-card, .edu-card, .contact-item, .btn, .nav-tab';
+                document.querySelectorAll(selector).forEach(el => {
+                    if (el._hoverBound) return;
+                    el._hoverBound = true;
+                    el.addEventListener('mouseenter', function() {
+                        triggerRippleFromElement(el);
+                    });
+                });
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, width, height);
+                const grad = ctx.createLinearGradient(0, 0, width * 0.8, height);
+                grad.addColorStop(0, '#0a1120');
+                grad.addColorStop(0.5, '#101f33');
+                grad.addColorStop(1, '#030712');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, width, height);
+
+                // 连线
+                ctx.lineWidth = 0.7;
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 95) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            const alpha = 0.14 * (1 - dist / 95);
+                            ctx.strokeStyle = 'rgba(0,194,186,' + alpha + ')';
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                // 粒子
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < 0 || p.x > width) p.vx *= -1;
+                    if (p.y < 0 || p.y > height) p.vy *= -1;
+                    p.x = Math.min(width, Math.max(0, p.x));
+                    p.y = Math.min(height, Math.max(0, p.y));
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fillStyle = p.baseColor;
+                    ctx.shadowColor = '#6366f1';
+                    ctx.shadowBlur = 9;
+                    ctx.fill();
+                });
+                ctx.shadowBlur = 0;
+
+                // 水波扩散
+                for (let i = ripples.length - 1; i >= 0; i--) {
+                    const r = ripples[i];
+                    r.radius += 5.5;
+                    r.alpha *= 0.93;
+                    if (r.radius > r.maxRadius || r.alpha < 0.02) {
+                        ripples.splice(i, 1);
+                        continue;
+                    }
+                    const rg = ctx.createRadialGradient(r.x, r.y, r.radius * 0.15, r.x, r.y, r.radius);
+                    rg.addColorStop(0, 'rgba(99,102,241,' + (r.alpha * 0.35) + ')');
+                    rg.addColorStop(0.7, 'rgba(0,194,186,' + (r.alpha * 0.15) + ')');
+                    rg.addColorStop(1, 'transparent');
+                    ctx.beginPath();
+                    ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = rg;
+                    ctx.fill();
+                }
+
+                // 悬停爆发粒子
+                for (let i = mouseRippleParticles.length - 1; i >= 0; i--) {
+                    const mp = mouseRippleParticles[i];
+                    mp.x += mp.vx;
+                    mp.y += mp.vy;
+                    mp.vx *= 0.95;
+                    mp.vy *= 0.95;
+                    mp.life -= mp.decay;
+                    if (mp.life <= 0.02) {
+                        mouseRippleParticles.splice(i, 1);
+                        continue;
+                    }
+                    ctx.beginPath();
+                    ctx.arc(mp.x, mp.y, mp.size * mp.life, 0, Math.PI * 2);
+                    ctx.fillStyle = mp.color.replace(')', ', ' + mp.life + ')').replace('hsl', 'hsla');
+                    ctx.shadowColor = '#a78bfa';
+                    ctx.shadowBlur = 13;
+                    ctx.fill();
+                }
+                ctx.shadowBlur = 0;
+
+                requestAnimationFrame(draw);
+            }
+
+            function initParticleSystem() {
+                resizeCanvas();
+                initParticles();
+                bindHoverEffects();
+                draw();
+                window.addEventListener('resize', () => {
+                    resizeCanvas();
+                    initParticles();
+                });
+            }
+
+            initParticleSystem();
+
+            // 动态元素绑定悬停
+            const observer = new MutationObserver(() => bindHoverEffects());
+            const appEl = document.querySelector('.main-container');
+            if (appEl) observer.observe(appEl, { childList: true, subtree: true });
+
+        })();
+    </script>
+</body>
+</html>
